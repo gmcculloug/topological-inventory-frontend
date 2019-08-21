@@ -1,4 +1,3 @@
-import './sample-component.scss';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -13,8 +12,6 @@ const SampleComponent = (props) => {
         <span className='sample-component'> { props.children } </span>
     );
 };
-
-SampleComponent.displayName = 'SampleComponent';
 
 SampleComponent.propTypes = {
     children: PropTypes.oneOfType([

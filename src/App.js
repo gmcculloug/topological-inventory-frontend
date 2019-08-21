@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Routes } from './Routes';
+import Routes from './routes';
 import './App.scss';
 
 class App extends Component {

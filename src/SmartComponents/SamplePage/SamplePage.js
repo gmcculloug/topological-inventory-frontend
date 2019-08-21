@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import asyncComponent from '../../Utilities/asyncComponent';
-import './sample-page.scss';
 
 import { Section, Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 
