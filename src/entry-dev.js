@@ -5,14 +5,13 @@ import { Provider } from 'react-redux';
 import { init } from './store';
 import App from './App';
 import logger from 'redux-logger';
-import getBaseName from './Utilities/getBaseName';
+import getBaseName from './utilities/getBaseName';
 
 ReactDOM.render(
-    <Provider store={ init(logger).getStore() }>
-        <Router basename={ getBaseName(window.location.pathname) }>
-            <App/>
-        </Router>
-    </Provider>,
-
-    document.getElementById('root')
+  <Provider store={ init(logger).getStore() }>
+    <Router basename={ getBaseName(window.location.pathname) }>
+      <App/>
+    </Router>
+  </Provider>,
+  document.getElementById('root')
 );
