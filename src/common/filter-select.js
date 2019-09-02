@@ -20,7 +20,7 @@ const FilterSelect = props => {
       <div key="filter-select-placeholder" id="filter-select-placeholder" className="filter-select">
         <rawComponents.Select
           components={ { ValueContainer } }
-          simpleValue={ false }
+          simpleValue={ true }
           options={ [] }
           isDisabled
         />
@@ -33,7 +33,7 @@ const FilterSelect = props => {
     <div key="filter-select" id="filter-select" className="filter-select">
       <rawComponents.Select
         components={ { ValueContainer } }
-        simpleValue={ false }
+        simpleValue={ true }
         { ...props }
       />
     </div>
