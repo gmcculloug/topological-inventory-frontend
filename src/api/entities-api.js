@@ -1,19 +1,12 @@
 import React, { Fragment } from 'react';
 import { getAxtionsInstace } from './api';
-import { SOURCES_API_BASE } from '../constants/api-constants';
+import { SOURCES_API_BASE, TOPOLOGICAL_INVETORY_API_BASE } from '../constants/api-constants';
 
 const api = getAxtionsInstace();
 
-const sourcesQuery = `
-query {
-  sources {
-    name
-    id
-  }
-}
-`;
+const generateRow = (dataSet, attributes = [ 'id', 'name' ]) =>
+  dataSet.map(row => attributes.map(key => <Fragment key={ key }>{ row[key] }</Fragment>));
 
-export const getSources = () => api.post(`${SOURCES_API_BASE}/graphql`, {
-  query: sourcesQuery
-}).then(({ data: { sources }}) => sources.map(({ id, name }) => ({
-  cells: [ <Fragment key={ id }>{ id }</Fragment>, <Fragment key={ name }>{ name }</Fragment> ]})));
+export const getSources = () => api.get(`${SOURCES_API_BASE}/sources`).then(({ data }) =>  generateRow(data.data));
+
+export const getVms = () => api.get(`${TOPOLOGICAL_INVETORY_API_BASE}/vms`).then(({ data }) =>  generateRow(data.data));

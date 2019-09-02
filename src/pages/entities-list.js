@@ -9,7 +9,7 @@ import {
 import { SET_TITLE } from '../store/action-types/top-toolbar-actions';
 import FilterSelect from '../common/filter-select';
 import FilterToolbarItem from '../common/filter-toolbar-item';
-import { getSources } from '../api/entities-api';
+import { getSources, getVms } from '../api/entities-api';
 
 const entitiesOptions = [{
   value: 'source',
@@ -26,7 +26,7 @@ const columns = [
 
 const queries = {
   source: getSources,
-  vm: getSources
+  vm: getVms
 };
 
 const EntitiesList = () => {
@@ -34,13 +34,14 @@ const EntitiesList = () => {
   const [ entityType, setEntityType ] = useState(entitiesOptions[0]);
   const [ filterValue, setFilterValue ] = useState('');
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch({ type: SET_TITLE, payload: 'Inventory' });
   }, []);
+
   useEffect(() => {
     queries[entityType.value]().then(data => setData(data));
   }, [ entityType ]);
-  console.log('render: ', data);
   return (
     <Fragment>
       <div className="table-filter pf-u-p-lg">
