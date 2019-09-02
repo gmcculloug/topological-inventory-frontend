@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from 'react';
 import TopologyViewer from '@data-driven-forms/topology-viewer';
 import Icons from '@patternfly/patternfly/icons/pf-icons.json';
 
-import { loadFullStructure } from '../utilities/topology-viewer-api';
+import { loadFullStructure } from '../api/topology-viewer-api';
 
 const reducer = (state, { type, payload }) => {
   const states = {

@@ -23,4 +23,5 @@ class App extends Component {
 App.propTypes = {
   history: PropTypes.object
 };
+
 export default withRouter(App);
