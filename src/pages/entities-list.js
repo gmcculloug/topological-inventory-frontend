@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Table,
   TableHeader,
@@ -10,12 +10,14 @@ import { SET_TITLE } from '../store/action-types/top-toolbar-actions';
 import FilterSelect from '../common/filter-select';
 import FilterToolbarItem from '../common/filter-toolbar-item';
 import { getSources, getVms } from '../api/entities-api';
+import * as vmsActionTypes from '../store/action-types/vms-action-types';
+import * as sourcesActionTypes from '../store/action-types/sources-action-types';
 
 const entitiesOptions = [{
-  value: 'source',
+  value: 'sources',
   label: 'Source'
 }, {
-  value: 'vm',
+  value: 'vms',
   label: 'VM'
 }];
 
@@ -25,14 +27,22 @@ const columns = [
 ];
 
 const queries = {
-  source: getSources,
-  vm: getVms
+  sources: getSources,
+  vms: getVms
 };
 
+const actionTypes = {
+  vms: vmsActionTypes.SET_DATA,
+  sources: sourcesActionTypes.SET_DATA
+};
+
+const generateRow = (dataSet, attributes = [ 'id', 'name' ]) =>
+  dataSet.map(row => attributes.map(key => <Fragment key={ key }>{ row[key] }</Fragment>));
+
 const EntitiesList = () => {
-  const [ data, setData ] = useState([]);
   const [ entityType, setEntityType ] = useState(entitiesOptions[0]);
   const [ filterValue, setFilterValue ] = useState('');
+  const data = useSelector(state => state[`${entityType.value}Reducer`].data);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -40,7 +50,7 @@ const EntitiesList = () => {
   }, []);
 
   useEffect(() => {
-    queries[entityType.value]().then(data => setData(data));
+    queries[entityType.value]().then(data => dispatch({ type: actionTypes[entityType.value], payload: data }));
   }, [ entityType ]);
   return (
     <Fragment>
@@ -52,7 +62,7 @@ const EntitiesList = () => {
           searchValue={ filterValue }
         />
       </div>
-      <Table aria-label="entities-list" cells={ columns } rows={ data }>
+      <Table aria-label="entities-list" cells={ columns } rows={ generateRow(data) }>
         <TableHeader />
         <TableBody />
       </Table>

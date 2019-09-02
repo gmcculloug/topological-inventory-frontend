@@ -1,5 +1,5 @@
 /*global describe, it, expect*/
-import getBaseName from './Utilities/getBaseName';
+import getBaseName from './utilities/get-base-name';
 
 describe('Utilities/getBaseName', () => {
   it('should find the right base name on Stable ', () => {
