@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { Main } from '@redhat-cloud-services/frontend-components';
+
 import Routes from './routes';
+import TopToolbar from './common/top-toolbar';
+
 import './App.scss';
 
 const App = () => {
@@ -9,9 +12,12 @@ const App = () => {
   }, []);
 
   return (
-    <Main>
-      <Routes />
-    </Main>
+    <Fragment>
+      <TopToolbar />
+      <Main>
+        <Routes />
+      </Main>
+    </Fragment>
   );
 };
 
