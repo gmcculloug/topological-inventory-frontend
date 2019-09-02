@@ -61,7 +61,7 @@ const rows = [
 
 const EntitiesList = () => {
   const [ data, setData ] = useState([]);
-  const [ entityType, setEntityType ] = useState('vm');
+  const [ entityType, setEntityType ] = useState(entitiesOptions[0]);
   const [ filterValue, setFilterValue ] = useState('');
   const dispatch = useDispatch();
   useEffect(() => {
@@ -72,8 +72,12 @@ const EntitiesList = () => {
   return (
     <Fragment>
       <div className="table-filter pf-u-p-lg">
-        <FilterSelect onChange={ value => setEntityType(value) } value={ entityType } options={ entitiesOptions } />
-        <FilterToolbarItem onFilterChange={ value => setFilterValue(value) } searchValue={ filterValue } />
+        <FilterSelect simpleValue={ false } onChange={ value => setEntityType(value) } value={ entityType } options={ entitiesOptions } />
+        <FilterToolbarItem
+          placeholder={ `Filter by ${entityType.label}...` }
+          onFilterChange={ value => setFilterValue(value) }
+          searchValue={ filterValue }
+        />
       </div>
       <Table aria-label="entities-list" cells={ columns } rows={ rows }>
         <TableHeader />
