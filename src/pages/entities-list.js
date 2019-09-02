@@ -3,13 +3,13 @@ import { useDispatch } from 'react-redux';
 import {
   Table,
   TableHeader,
-  TableBody,
-  textCenter
+  TableBody
 } from '@patternfly/react-table';
 
 import { SET_TITLE } from '../store/action-types/top-toolbar-actions';
 import FilterSelect from '../common/filter-select';
 import FilterToolbarItem from '../common/filter-toolbar-item';
+import { getSources } from '../api/entities-api';
 
 const entitiesOptions = [{
   value: 'source',
@@ -20,44 +20,14 @@ const entitiesOptions = [{
 }];
 
 const columns = [
-  { title: 'Repositories' },
-  'Branches',
-  { title: 'Pull requests' },
-  'Workspaces',
-  {
-    title: 'Last Commit',
-    transforms: [ textCenter ],
-    cellTransforms: [ textCenter ]
-  }
+  'Id',
+  'Name'
 ];
 
-const rows = [
-  {
-    cells: [ 'one', 'two', 'three', 'four', 'five' ]
-  },
-  {
-    cells: [
-      {
-        title: <div>one - 2</div>,
-        props: { title: 'hover title', colSpan: 3 }
-      },
-      'four - 2',
-      'five - 2'
-    ]
-  },
-  {
-    cells: [
-      'one - 3',
-      'two - 3',
-      'three - 3',
-      'four - 3',
-      {
-        title: 'five - 3 (not centered)',
-        props: { textCenter: false }
-      }
-    ]
-  }
-];
+const queries = {
+  source: getSources,
+  vm: getSources
+};
 
 const EntitiesList = () => {
   const [ data, setData ] = useState([]);
@@ -65,10 +35,12 @@ const EntitiesList = () => {
   const [ filterValue, setFilterValue ] = useState('');
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log(data, setData);
     dispatch({ type: SET_TITLE, payload: 'Inventory' });
   }, []);
-  console.log(entityType);
+  useEffect(() => {
+    queries[entityType.value]().then(data => setData(data));
+  }, [ entityType ]);
+  console.log('render: ', data);
   return (
     <Fragment>
       <div className="table-filter pf-u-p-lg">
@@ -79,7 +51,7 @@ const EntitiesList = () => {
           searchValue={ filterValue }
         />
       </div>
-      <Table aria-label="entities-list" cells={ columns } rows={ rows }>
+      <Table aria-label="entities-list" cells={ columns } rows={ data }>
         <TableHeader />
         <TableBody />
       </Table>
