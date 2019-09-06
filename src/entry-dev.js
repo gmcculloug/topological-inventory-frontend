@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { init } from './store';
 import App from './App';
 import logger from 'redux-logger';
-import getBaseName from './utilities/getBaseName';
+import getBaseName from './utilities/get-base-name';
 
 ReactDOM.render(
   <Provider store={ init(logger).getStore() }>

@@ -1,17 +1,21 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import TopologyView from './pages/topology-view';
+
+const TopologyView = lazy(() => import('./pages/topology-view'));
+const EntitiesList = lazy(() => import('./pages/entities-list'));
 
 const paths = {
-  topologyView: '/'
+  index: '/',
+  topologyView: '/topology-viewer'
 };
 
 const Routes = () => {
   return (
     <Suspense fallback={ <div>Loading</div> }>
       <Switch>
-        <Route path={ paths.topologyView } component={ TopologyView } rootClass='samplepage'/>
-        <Route path="*" component={ TopologyView }/>
+        <Route path={ paths.index } component={ EntitiesList }/>
+        <Route path={ paths.topologyView } component={ TopologyView }/>
+        <Route path="*" component={ EntitiesList }/>
       </Switch>
     </Suspense>
   );

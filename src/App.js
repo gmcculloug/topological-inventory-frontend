@@ -1,26 +1,24 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { Main } from '@redhat-cloud-services/frontend-components';
-import { withRouter } from 'react-router-dom';
+
 import Routes from './routes';
+import TopToolbar from './common/top-toolbar';
+
 import './App.scss';
 
-class App extends Component {
-
-  componentDidMount () {
+const App = () => {
+  useEffect(() => {
     insights.chrome.init();
-  }
+  }, []);
 
-  render () {
-    return (
+  return (
+    <Fragment>
+      <TopToolbar />
       <Main>
-        <Routes childProps={ this.props } />
+        <Routes />
       </Main>
-    );
-  }
-}
-
-App.propTypes = {
-  history: PropTypes.object
+    </Fragment>
+  );
 };
-export default withRouter(App);
+
+export default App;

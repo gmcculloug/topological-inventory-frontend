@@ -7,8 +7,10 @@
 const localhost = (process.env.PLATFORM === 'linux') ? 'localhost' : 'host.docker.internal';
 
 module.exports = {
-    routes: {
-        '/apps/topological-inventory': { host: `https://${localhost}:8002` },
-        '/hybrid/topological-inventory': { host: `https://${localhost}:8002` }
-    }
+  routes: {
+    '/apps/topological-inventory': { host: `https://${localhost}:8002` },
+    '/hybrid/topological-inventory': { host: `https://${localhost}:8002` },
+    '/beta/apps/topological-inventory': { host: `https://${localhost}:8002` },
+    '/beta/hybrid/topological-inventory': { host: `https://${localhost}:8002` }
+  }
 };

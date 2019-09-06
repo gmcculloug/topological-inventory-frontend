@@ -1,8 +1,6 @@
 /* eslint-disable no-console */
 import { getAxtionsInstace } from './api';
-
-const TOPOLOGICAL_INVETORY_API_BASE = `/api/topological-inventory/v1.0`;
-console.log(TOPOLOGICAL_INVETORY_API_BASE);
+import { TOPOLOGICAL_INVETORY_API_BASE } from '../constants/api-constants';
 const API = getAxtionsInstace();
 
 const structureQuery = `
