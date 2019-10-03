@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import debouncePromise from 'awesome-debounce-promise';
-
 import { Pagination } from '@patternfly/react-core';
 
 import { getCurrentPage, getNewPage } from '../utilities/pagination';
 
 const AsyncPagination = ({ meta: { limit, count, offset }, apiProps, apiRequest, ...props }) => {
-
   const handleOnPerPageSelect = (_event, limit) => apiRequest(apiProps, {
     offset,
     limit
