@@ -9,6 +9,7 @@ import './App.scss';
 const App = () => {
   useEffect(() => {
     insights.chrome.init();
+    insights.chrome.identifyApp('topological-inventory');
   }, []);
 
   return (
