@@ -12,7 +12,7 @@ const SourcesListTableToolbar = ({
   meta,
   apiRequest
 }) => {
-  const debouncedRequest = debouncePromise((value) => apiRequest({ filter: value }, meta), 500);
+  const debouncedRequest = debouncePromise((value) => apiRequest({ filter: value }), 500);
   return (
     <div className="table-filter pf-u-p-lg">
       <Level style={ { width: '100%' } }>
@@ -38,8 +38,7 @@ SourcesListTableToolbar.propTypes = {
   setFilterValue: PropTypes.func.isRequired,
   filterValue: PropTypes.string.isRequired,
   meta: PropTypes.object.isRequired,
-  apiRequest: PropTypes.func.isRequired,
-  label: PropTypes.string.isRequired
+  apiRequest: PropTypes.func.isRequired
 };
 
 export default SourcesListTableToolbar;

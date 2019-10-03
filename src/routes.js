@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 const TopologyView = lazy(() => import('./pages/topology-view'));
-const EntitiesList = lazy(() => import('./pages/entities-list'));
+const EntitiesList = lazy(() => import('./pages/sources-list'));
 
 const paths = {
   index: '/',
