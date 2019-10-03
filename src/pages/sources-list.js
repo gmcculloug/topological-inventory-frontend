@@ -5,6 +5,7 @@ import {
   TableHeader,
   TableBody
 } from '@patternfly/react-table';
+import { useHistory } from 'react-router-dom';
 
 import { SET_TITLE } from '../store/action-types/top-toolbar-actions';
 import { getSources } from '../api/entities-api';
@@ -28,12 +29,13 @@ const EntitiesList = () => {
   const [ filterValue, setFilterValue ] = useState('');
   const { data, meta } = useSelector(state => state.sourcesReducer);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     dispatch({ type: SET_TITLE, payload: 'Inventory' });
     getSources().then(data => dispatch({ type: SET_DATA, payload: data }));
   }, []);
-
+  const rows =  generateRow(data);
   return (
     <Fragment>
       <SourcesListTableToolbar
@@ -42,9 +44,11 @@ const EntitiesList = () => {
         filterValue={ filterValue }
         setFilterValue={ setFilterValue }
       />
-      <Table aria-label="entities-list" cells={ columns } rows={ generateRow(data) }>
+      <Table aria-label="entities-list" cells={ columns } rows={ rows }>
         <TableHeader />
-        <TableBody />
+        <TableBody
+          onRowClick={ (_component, _row, { rowIndex }) => history.push({ pathname: '/entity', search: `?entity=source&id=${data[rowIndex].id}` }) }
+        />
       </Table>
     </Fragment>
   );
