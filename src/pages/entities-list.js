@@ -22,7 +22,7 @@ const entitiesOptions = [{
 }];
 
 const columns = [
-  'Id',
+  'Identifier',
   'Name'
 ];
 
@@ -37,7 +37,7 @@ const actionTypes = {
 };
 
 const generateRow = (dataSet, attributes = [ 'id', 'name' ]) =>
-  dataSet.map(row => attributes.map(key => <Fragment key={ key }>{ row[key] }</Fragment>));
+  dataSet.map(row => attributes.map(key => row[key]));
 
 const EntitiesList = () => {
   const [ entityType, setEntityType ] = useState(entitiesOptions[0]);
