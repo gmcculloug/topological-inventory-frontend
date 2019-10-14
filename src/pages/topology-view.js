@@ -25,6 +25,7 @@ const buildNodes = (childKeys = [], data, level = 0) => {
   let newData = { ...data };
   let result = [];
   let currentKey = keys.shift();
+  console.log('data: ', data);
   newData[keys[0]] = [];
   if (currentKey) {
     result = data[currentKey].map(item => {
@@ -60,7 +61,7 @@ const buildNodes = (childKeys = [], data, level = 0) => {
 const TopologyView = () => {
   const [ state, dispatch ] = useReducer(reducer, initialState);
   useEffect(() => {
-    loadFullStructure().then(({ data }) => buildNodes([ 'sources', 'source_regions', 'networks', 'subnets', 'network_adapters' ], data))
+    loadFullStructure().then((data) => buildNodes([ 'sources', 'source_regions', 'networks', 'subnets', 'network_adapters' ], data))
     .then((structure) => {
       dispatch({ type: 'setData', payload: { structure, nodes: [ ...structure.sources ]}});
     });
