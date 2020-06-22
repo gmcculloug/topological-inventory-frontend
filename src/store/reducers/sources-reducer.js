@@ -5,12 +5,12 @@ export const sourcesInitialState = {
   meta: {
     limit: 50,
     offset: 0,
-    count: 0
-  }
+    count: 0,
+  },
 };
 
 const setData = (state, { payload }) => ({ ...state, ...payload });
 
 export default {
-  [SET_DATA]: setData
+  [SET_DATA]: setData,
 };

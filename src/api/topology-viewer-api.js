@@ -25,6 +25,7 @@ query {
   }
 }
 `;
-export const loadFullStructure = () => API.post(`${TOPOLOGICAL_INVETORY_API_BASE}/graphql`, {
-  query: structureQuery
-}).then(({ data }) => data);
+export const loadFullStructure = () =>
+  API.post(`${TOPOLOGICAL_INVETORY_API_BASE}/graphql`, {
+    query: structureQuery,
+  }).then(({ data }) => data);

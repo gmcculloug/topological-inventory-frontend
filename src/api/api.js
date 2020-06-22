@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const resolveInterceptor = response => response.data || response;
+const resolveInterceptor = (response) => response.data || response;
 const axiosInstance = axios.create();
 axiosInstance.interceptors.response.use(resolveInterceptor);
 
@@ -11,7 +11,7 @@ export const getAxtionsInstace = () => axiosInstance;
  */
 
 const grapqlInstance = axios.create();
-grapqlInstance.interceptors.request.use(async config => {
+grapqlInstance.interceptors.request.use(async (config) => {
   await window.insights.chrome.auth.getUser();
   return config;
 });
@@ -24,7 +24,7 @@ grapqlInstance.interceptors.response.use(({ data }) => {
   if (data.errors) {
     throw {
       message: data.errors[0].errorType,
-      data: data.errors[0].message
+      data: data.errors[0].message,
     };
   }
 

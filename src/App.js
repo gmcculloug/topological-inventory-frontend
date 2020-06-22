@@ -1,10 +1,6 @@
 import React, { Fragment, useEffect } from 'react';
-import { Main } from '@redhat-cloud-services/frontend-components';
 
 import Routes from './routes';
-import TopToolbar from './common/top-toolbar';
-
-import './App.scss';
 
 const App = () => {
   useEffect(() => {
@@ -14,10 +10,7 @@ const App = () => {
 
   return (
     <Fragment>
-      <TopToolbar />
-      <Main>
-        <Routes />
-      </Main>
+      <Routes />
     </Fragment>
   );
 };
