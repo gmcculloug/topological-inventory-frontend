@@ -14,7 +14,7 @@ const setData = (state, { payload }) => ({ ...state, ...payload });
 const updateNested = (data, id, subCollections) =>
   data.map((node) =>
     node.id === id
-      ? { ...node, subCollections }
+      ? { ...node, subCollections: [...(node.subCollections ? node.subCollections : []), subCollections] }
       : node.subCollections
       ? { ...node, subCollections: updateNested(node.subCollections, id, subCollections) }
       : node
