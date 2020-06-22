@@ -3,21 +3,19 @@ import { Route, Switch } from 'react-router-dom';
 
 const TopologyView = lazy(() => import('./pages/topology-view'));
 const SourcesList = lazy(() => import('./pages/sources-list'));
-const EntityDetail = lazy(() => import('./pages/entity-detail'));
 
 const paths = {
   index: '/',
   detail: '/entity',
-  topologyView: '/topology-viewer'
+  topologyView: '/topology-viewer',
 };
 
 const Routes = () => (
-  <Suspense fallback={ <div>Loading</div> }>
+  <Suspense fallback={<div>Loading</div>}>
     <Switch>
-      <Route exact path={ paths.index } component={ SourcesList }/>
-      <Route exact path={ paths.topologyView } component={ TopologyView }/>
-      <Route exact path={ paths.detail } component={ EntityDetail } />
-      <Route path="*" component={ SourcesList }/>
+      <Route exact path={paths.index} component={SourcesList} />
+      <Route exact path={paths.topologyView} component={TopologyView} />
+      <Route path="*" component={SourcesList} />
     </Switch>
   </Suspense>
 );

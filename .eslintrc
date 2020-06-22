@@ -2,8 +2,8 @@
   "parser": "babel-eslint",
   "env": {
     "browser": true,
-    "node": true,
-    "es6": true
+    "es6": true,
+    "node": true
   },
   "settings": {
     "react": {
@@ -11,9 +11,13 @@
     }
   },
   "extends": [
+    "plugin:prettier/recommended",
+    "prettier/react",
     "eslint:recommended",
-    "prettier",
     "plugin:react/recommended"
+  ],
+  "plugins": [
+    "react"
   ],
   "parserOptions": {
     "ecmaVersion": 7,
@@ -33,14 +37,7 @@
     "React": true
   },
   "rules": {
-    "array-bracket-spacing": [
-      "error",
-      "always",
-      {
-        "objectsInArrays": false
-      }
-    ],
-    "comma-dangle": 2,
+    "comma-dangle": "off",
     "comma-spacing": [
       2,
       {
@@ -48,7 +45,7 @@
       }
     ],
     "comma-style": 2,
-    "camelcase": "warn",
+    "camelcase": 0,
     "curly": [
       "error",
       "all"
@@ -60,48 +57,20 @@
       "error",
       "never"
     ],
-    "indent": [
-      "error",
-      2,
-      {
-        "SwitchCase": 1,
-        "MemberExpression": 0,
-        "ImportDeclaration": 1,
-        "ObjectExpression": 1
-      }
-    ],
-    "react/jsx-curly-spacing": [
-      "error",
-      "always",
-      {
-        "children": true
-      },
-      {
-        "allowMultiline": false
-      },
-      {
-        "spacing": [
-          {
-            "objectLiterals": [
-              "never"
-            ]
-          }
-        ]
-      }
-    ],
     "key-spacing": 2,
     "keyword-spacing": 2,
     "linebreak-style": [
-      "error",
+      "warn",
       "unix"
     ],
     "max-len": [
-      2,
+      "error",
       150
     ],
     "new-cap": 2,
     "no-bitwise": 2,
     "no-caller": 2,
+    "no-console": 1,
     "no-mixed-spaces-and-tabs": 2,
     "no-multiple-empty-lines": [
       "error",
@@ -111,30 +80,29 @@
     ],
     "no-trailing-spaces": 2,
     "no-use-before-define": [
-      "error",
+      "warn",
       {
         "functions": false
       }
     ],
     "no-undef": 2,
-    "no-unused-vars": 2,
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true
+      }
+    ],
     "no-var": 2,
     "no-with": 2,
     "object-shorthand": 2,
-    "object-curly-spacing": [
-      "error",
-      "always",
-      {
-        "objectsInObjects": false,
-        "arraysInObjects": false
-      }
-    ],
     "one-var": [
       "error",
       "never"
     ],
     "padding-line-between-statements": [
-      "error",
+      "warn",
       {
         "blankLine": "always",
         "prev": "block-like",
@@ -172,6 +140,6 @@
       "error",
       "never"
     ],
-    "no-console": "warn"
+    "react/prop-types": 2
   }
 }
