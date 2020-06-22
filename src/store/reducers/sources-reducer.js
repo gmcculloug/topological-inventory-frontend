@@ -1,4 +1,4 @@
-import { SET_DATA } from '../action-types/sources-action-types';
+import { SET_DATA, UPDATE_NODE } from '../action-types/sources-action-types';
 
 export const sourcesInitialState = {
   data: [],
@@ -11,6 +11,21 @@ export const sourcesInitialState = {
 
 const setData = (state, { payload }) => ({ ...state, ...payload });
 
+const updateNested = (data, id, subCollections) =>
+  data.map((node) =>
+    node.id === id
+      ? { ...node, subCollections }
+      : node.subCollections
+      ? { ...node, subCollections: updateNested(node.subCollections, id, subCollections) }
+      : node
+  );
+
+const updateNode = ({ data, ...state }, { id, subCollections }) => ({
+  ...state,
+  data: updateNested(data, id, subCollections),
+});
+
 export default {
   [SET_DATA]: setData,
+  [UPDATE_NODE]: updateNode,
 };
