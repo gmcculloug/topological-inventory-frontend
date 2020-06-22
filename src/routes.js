@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 const TopologyView = lazy(() => import('./pages/topology-view'));
-const SourcesList = lazy(() => import('./pages/sources-list'));
+const TreeView = lazy(() => import('./pages/tree-view'));
 
 const paths = {
   index: '/',
@@ -13,9 +13,9 @@ const paths = {
 const Routes = () => (
   <Suspense fallback={<div>Loading</div>}>
     <Switch>
-      <Route exact path={paths.index} component={SourcesList} />
+      <Route exact path={paths.index} component={TreeView} />
       <Route exact path={paths.topologyView} component={TopologyView} />
-      <Route path="*" component={SourcesList} />
+      <Route path="*" component={TreeView} />
     </Switch>
   </Suspense>
 );
