@@ -79,7 +79,7 @@ const TreeView = () => {
   const treeData = createTreeData(structure);
   return (
     <div>
-      <Tree data={treeData} />
+      <Tree data={treeData} render={({ title }) => <a>{title}</a>} />
     </div>
   );
 };
