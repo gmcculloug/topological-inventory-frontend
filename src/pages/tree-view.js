@@ -11,8 +11,9 @@ import {
   getServiceOfferings,
 } from '../api/ansible-tower';
 import { UPDATE_NODE, SET_DATA } from '../store/action-types/sources-action-types';
+import { Link } from 'react-router-dom';
 
-function createNodeData(node) {
+function createNodeData(node, type) {
   if (!node) {
     return;
   }
@@ -25,7 +26,7 @@ function createNodeData(node) {
         {
           id: `sub-collection-${collection.type}`,
           title: collection.type,
-          children: collection.data.data.map((child) => createNodeData(child)),
+          children: collection.data.data.map((child) => createNodeData(child, collection.type)),
         },
       ];
     });
@@ -35,6 +36,8 @@ function createNodeData(node) {
     ...copy,
     id: node.id,
     title: node.name || node.id,
+    ...(type && { type }),
+    nodeData: node,
   };
 }
 
@@ -79,7 +82,23 @@ const TreeView = () => {
   const treeData = createTreeData(structure);
   return (
     <div>
-      <Tree data={treeData} render={({ title }) => <a>{title}</a>} />
+      <Tree
+        data={treeData}
+        render={({ title, id, type }) =>
+          type ? (
+            <Link
+              to={{
+                pathname: '/entity',
+                search: `?id=${id}&type=${type}`,
+              }}
+            >
+              {title}
+            </Link>
+          ) : (
+            <div>{title}</div>
+          )
+        }
+      />
     </div>
   );
 };
