@@ -46,7 +46,11 @@ const reducer = (state, { type, payload }) => {
     setEdges: (data) => ({ ...state, edges: data }),
     setNodes: (data) => ({ ...state, nodes: data }),
     setData: (data) => ({ ...state, ...data }),
-    updateGraph: (data) => ({ ...state, nodes: [...state.nodes, ...data.nodes], edges: [...state.edges, ...data.edges] }),
+    updateGraph: (data) => ({
+      ...state,
+      nodes: [...state.nodes, ...data.nodes],
+      edges: [...state.edges, ...data.edges],
+    }),
     markNode: (data) => ({ ...state, nodes: state.nodes.map((node) => (node.id === data.id ? { ...data } : node)) }),
   };
   return states[type](payload);
@@ -57,24 +61,24 @@ const initialState = {
   edges: [],
 };
 
-// eslint-disable-next-line max-len
-const buildNodes = ({ source, serviceOfferings, servicePlans, serviceInstances, serviceInventories, serviceInstanceNodes, serviceOfferingsNode, group }) => {
+const ansibleSourceChildren = ({
+  source,
+  serviceOfferings,
+  servicePlans,
+  serviceInstances,
+  serviceInventories,
+  serviceInstanceNodes,
+  serviceOfferingsNode,
+  group,
+}) => {
   const sourceId = `source-${source.id}`;
-  const nodes = [
-    {
-      id: sourceId,
-      title: source.id,
-      group,
-      level: 0,
-      nodeShape: 'hexagon',
-      nodeType: 'source',
-      children: 6,
-    },
+
+  return [
     {
       id: `${sourceId}-serviceOfferings`,
       title: 'ServiceOfferings',
       group,
-      level: 1,
+      level: 0,
       nodeShape: 'square',
       nodeType: 'serviceOfferings',
       children: serviceOfferings.meta.count,
@@ -84,7 +88,7 @@ const buildNodes = ({ source, serviceOfferings, servicePlans, serviceInstances, 
       id: `${sourceId}-servicePlans`,
       title: 'servicePlans',
       group,
-      level: 1,
+      level: 0,
       nodeShape: 'square',
       nodeType: 'servicePlans',
       children: servicePlans.meta.count,
@@ -94,7 +98,7 @@ const buildNodes = ({ source, serviceOfferings, servicePlans, serviceInstances, 
       id: `${sourceId}-serviceInstances`,
       title: 'serviceInstances',
       group,
-      level: 1,
+      level: 0,
       nodeShape: 'square',
       nodeType: 'serviceInstances',
       children: serviceInstances.meta.count,
@@ -104,7 +108,7 @@ const buildNodes = ({ source, serviceOfferings, servicePlans, serviceInstances, 
       id: `${sourceId}-serviceInventories`,
       title: 'serviceInventories',
       group,
-      level: 1,
+      level: 0,
       nodeShape: 'square',
       nodeType: 'serviceInventories',
       children: serviceInventories.meta.count,
@@ -114,7 +118,7 @@ const buildNodes = ({ source, serviceOfferings, servicePlans, serviceInstances, 
       id: `${sourceId}-serviceInstanceNodes`,
       title: 'serviceInstanceNodes',
       group,
-      level: 1,
+      level: 0,
       nodeShape: 'square',
       nodeType: 'serviceInstanceNodes',
       children: serviceInstanceNodes.meta.count,
@@ -124,15 +128,38 @@ const buildNodes = ({ source, serviceOfferings, servicePlans, serviceInstances, 
       id: `${sourceId}-serviceOfferingsNode`,
       title: 'serviceOfferingsNode',
       group,
-      level: 1,
+      level: 0,
       nodeShape: 'square',
       nodeType: 'serviceOfferingsNode',
       children: serviceOfferingsNode.meta.count,
       parentId: source.id,
     },
   ];
+};
 
-  const edges = nodes.slice(1).map(({ id }) => ({ source: sourceId, target: id, directional: true, id: `edge-${sourceId}-${id}` }));
+// eslint-disable-next-line max-len
+const buildNodes = ({
+  source,
+  serviceOfferings,
+  servicePlans,
+  serviceInstances,
+  serviceInventories,
+  serviceInstanceNodes,
+  serviceOfferingsNode,
+  group,
+}) => {
+  const sourceId = `source-${source.id}`;
+  const nodes = [
+    {
+      id: sourceId,
+      title: source.id,
+      group,
+      nodeShape: 'hexagon',
+      nodeType: 'source',
+      children: 6,
+      originalId: source.id,
+    },
+  ];
 
   const structure = {
     source,
@@ -146,7 +173,7 @@ const buildNodes = ({ source, serviceOfferings, servicePlans, serviceInstances, 
 
   return {
     nodes,
-    edges,
+    edges: [],
     structure: { ...structure, group },
   };
 };
@@ -155,7 +182,7 @@ const createChildNodes = (source, children, nodeType, group) => {
   const nodes = children.map((child) => ({
     title: child.name || child.title || child.id,
     group,
-    level: 2,
+    level: 1,
     nodeShape: 'circle',
     id: `${parent.id}-${child.id}`,
     nodeType,
@@ -189,7 +216,14 @@ const TopologyView = () => {
           getServiceOfferingNodes(source.id),
         ];
         return Promise.all(subCollections).then(
-          ([serviceOfferings, servicePlans, serviceInstances, serviceInventories, serviceInstanceNodes, serviceOfferingsNode]) =>
+          ([
+            serviceOfferings,
+            servicePlans,
+            serviceInstances,
+            serviceInventories,
+            serviceInstanceNodes,
+            serviceOfferingsNode,
+          ]) =>
             buildNodes({
               source,
               serviceOfferings,
@@ -244,12 +278,27 @@ const TopologyView = () => {
   const handleNodeClick = (node) => {
     dispatch({ type: 'markNode', payload: { ...node, wasClicked: true } });
     if (!node.wasClicked && node.children !== undefined) {
-      const { nodes: childNodes, edges: childEdges } = createChildNodes(
-        node,
-        state.structure[node.parentId][node.nodeType].data,
-        node.nodeType,
-        state.structure[node.parentId].group
-      );
+      let childNodes = [];
+      let childEdges = [];
+      if (node.nodeType === 'source') {
+        childNodes = ansibleSourceChildren({ ...state.structure[node.originalId], group: node.group });
+        childEdges = childNodes.map(({ id }) => ({
+          source: node.id,
+          target: id,
+          directional: true,
+          id: `edge-${node.id}-${id}`,
+        }));
+      } else {
+        const childStructure = createChildNodes(
+          node,
+          state.structure[node.parentId][node.nodeType].data,
+          node.nodeType,
+          state.structure[node.parentId].group
+        );
+        childNodes = childStructure.nodes;
+        childEdges = childStructure.edges;
+      }
+
       const nodes = [
         ...state.nodes.map((item) => ({
           ...item,
@@ -270,7 +319,7 @@ const TopologyView = () => {
             ? {
                 ...originalNode,
                 wasClicked: false,
-                children: state.structure[node.parentId][node.nodeType].meta.count,
+                children: node.nodeType === 'source' ? 6 : state.structure[node.parentId][node.nodeType].meta.count,
               }
             : item
         );
@@ -289,7 +338,9 @@ const TopologyView = () => {
     serviceOfferingsNode: Icons.info,
   };
 
-  return <TopologyViewer handleNodeClick={handleNodeClick} edges={state.edges} nodes={state.nodes} iconMapper={iconMapper} />;
+  return (
+    <TopologyViewer handleNodeClick={handleNodeClick} edges={state.edges} nodes={state.nodes} iconMapper={iconMapper} />
+  );
 };
 
 export default TopologyView;

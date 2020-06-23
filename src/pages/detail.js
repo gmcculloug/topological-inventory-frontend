@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
-import { Card, CardTitle, CardBody, TextContent, TextListItem, TextListItemVariants, TextListVariants, TextList } from '@patternfly/react-core';
+import {
+  Card,
+  CardTitle,
+  CardBody,
+  TextContent,
+  TextListItem,
+  TextListItemVariants,
+  TextListVariants,
+  TextList,
+} from '@patternfly/react-core';
 
 import {
   getSource,
