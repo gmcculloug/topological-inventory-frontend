@@ -159,7 +159,7 @@ const TreeView = () => {
                       {title}
                     </a>
                   ) : (
-                    <div>{title}</div>
+                    <span>{title}</span>
                   )
                 }
               />

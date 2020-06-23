@@ -5,7 +5,7 @@ import Node from './node';
 const Tree = ({ data, render }) => {
   return (
     <div>
-      <h1>Tree component</h1>
+      <h1>Sources</h1>
       {data.map((node) => (
         <Node key={node.id} {...node} render={render} />
       ))}
