@@ -40,6 +40,9 @@ import {
   getServiceInstanceNodes,
   getServiceOfferingNodes,
 } from '../api/ansible-tower';
+import { paths } from '../routes';
+import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
+import { Link } from 'react-router-dom';
 
 const reducer = (state, { type, payload }) => {
   const states = {
@@ -339,7 +342,20 @@ const TopologyView = () => {
   };
 
   return (
-    <TopologyViewer handleNodeClick={handleNodeClick} edges={state.edges} nodes={state.nodes} iconMapper={iconMapper} />
+    <React.Fragment>
+      <Breadcrumb style={{ position: 'absolute' }} className="pf-u-m-lg">
+        <BreadcrumbItem>
+          <Link to={paths.index}>Topology Inventory</Link>
+        </BreadcrumbItem>
+        <BreadcrumbItem isActive>Topology view</BreadcrumbItem>
+      </Breadcrumb>
+      <TopologyViewer
+        handleNodeClick={handleNodeClick}
+        edges={state.edges}
+        nodes={state.nodes}
+        iconMapper={iconMapper}
+      />
+    </React.Fragment>
   );
 };
 
