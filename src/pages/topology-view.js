@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import TopologyViewer from '@data-driven-forms/topology-viewer';
 
 const Icons = {
@@ -43,6 +43,7 @@ import {
 import { paths } from '../routes';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
+import DetailDrawer from '../components/detail-drawer';
 
 const reducer = (state, { type, payload }) => {
   const states = {
@@ -84,7 +85,7 @@ const ansibleSourceChildren = ({
       level: 0,
       nodeShape: 'square',
       nodeType: 'serviceOfferings',
-      children: serviceOfferings.meta.count,
+      children: serviceOfferings.meta.count > 0 ? serviceOfferings.meta.count : undefined,
       parentId: source.id,
     },
     {
@@ -94,7 +95,7 @@ const ansibleSourceChildren = ({
       level: 0,
       nodeShape: 'square',
       nodeType: 'servicePlans',
-      children: servicePlans.meta.count,
+      children: servicePlans.meta.count > 0 ? servicePlans.meta.count : undefined,
       parentId: source.id,
     },
     {
@@ -104,7 +105,7 @@ const ansibleSourceChildren = ({
       level: 0,
       nodeShape: 'square',
       nodeType: 'serviceInstances',
-      children: serviceInstances.meta.count,
+      children: serviceInstances.meta.count > 0 ? serviceInstances.meta.count : undefined,
       parentId: source.id,
     },
     {
@@ -114,7 +115,7 @@ const ansibleSourceChildren = ({
       level: 0,
       nodeShape: 'square',
       nodeType: 'serviceInventories',
-      children: serviceInventories.meta.count,
+      children: serviceInventories.meta.count > 0 ? serviceInventories.meta.count : undefined,
       parentId: source.id,
     },
     {
@@ -124,7 +125,7 @@ const ansibleSourceChildren = ({
       level: 0,
       nodeShape: 'square',
       nodeType: 'serviceInstanceNodes',
-      children: serviceInstanceNodes.meta.count,
+      children: serviceInstanceNodes.meta.count > 0 ? serviceInstanceNodes.meta.count : undefined,
       parentId: source.id,
     },
     {
@@ -134,7 +135,7 @@ const ansibleSourceChildren = ({
       level: 0,
       nodeShape: 'square',
       nodeType: 'serviceOfferingsNode',
-      children: serviceOfferingsNode.meta.count,
+      children: serviceOfferingsNode.meta.count > 0 ? serviceOfferingsNode.meta.count : undefined,
       parentId: source.id,
     },
   ];
@@ -181,7 +182,7 @@ const buildNodes = ({
   };
 };
 
-const createChildNodes = (source, children, nodeType, group) => {
+const createChildNodes = (source, children, nodeType, group, sourceId) => {
   const nodes = children.map((child) => ({
     title: child.name || child.title || child.id,
     group,
@@ -191,6 +192,7 @@ const createChildNodes = (source, children, nodeType, group) => {
     nodeType,
     parentId: parent.id,
     entityId: child.id,
+    sourceId,
   }));
   const edges = children.map((child) => ({
     source: source.id,
@@ -206,6 +208,9 @@ const createChildNodes = (source, children, nodeType, group) => {
 
 const TopologyView = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const [data, setData] = useState({});
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     getSources().then((sources) => {
@@ -280,6 +285,25 @@ const TopologyView = () => {
 
   const handleNodeClick = (node) => {
     dispatch({ type: 'markNode', payload: { ...node, wasClicked: true } });
+    setOpen(true);
+    let drawerData;
+    if (!node.wasClicked && node.nodeType === 'source') {
+      drawerData = state.structure[node.originalId].source;
+    } else {
+      drawerData = state.structure[node.sourceId || node.parentId][node.nodeType].data.find(
+        ({ id }) => id === node.entityId
+      ) || {
+        name: node.nodeType,
+        id: node.id,
+        entities: state.structure[node.parentId][node.nodeType],
+      };
+    }
+
+    setData({
+      type: node.nodeType,
+      ...drawerData,
+    });
+
     if (!node.wasClicked && node.children !== undefined) {
       let childNodes = [];
       let childEdges = [];
@@ -296,7 +320,8 @@ const TopologyView = () => {
           node,
           state.structure[node.parentId][node.nodeType].data,
           node.nodeType,
-          state.structure[node.parentId].group
+          state.structure[node.parentId].group,
+          node.parentId
         );
         childNodes = childStructure.nodes;
         childEdges = childStructure.edges;
@@ -342,7 +367,7 @@ const TopologyView = () => {
   };
 
   return (
-    <React.Fragment>
+    <DetailDrawer open={open} data={data} setOpen={setOpen}>
       <Breadcrumb style={{ position: 'absolute' }} className="pf-u-m-lg">
         <BreadcrumbItem>
           <Link to={paths.index}>Topological inventory</Link>
@@ -355,7 +380,7 @@ const TopologyView = () => {
         nodes={state.nodes}
         iconMapper={iconMapper}
       />
-    </React.Fragment>
+    </DetailDrawer>
   );
 };
 
