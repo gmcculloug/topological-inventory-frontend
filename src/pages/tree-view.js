@@ -12,6 +12,8 @@ import {
 } from '../api/ansible-tower';
 import { UPDATE_NODE, SET_DATA } from '../store/action-types/sources-action-types';
 import { Link } from 'react-router-dom';
+import { Card, CardBody } from '@patternfly/react-core';
+import CardLoader from '../components/loaders/card-loader';
 
 function createNodeData(node, type) {
   if (!node) {
@@ -53,65 +55,70 @@ const TreeView = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const structure = useSelector(({ sourcesReducer }) => sourcesReducer);
+
   useEffect(() => {
-    setLoading(true);
-    getSources()
-      .then((data) => {
-        dispatch({ type: SET_DATA, payload: data });
-        return data.data;
-      })
-      .then((sources) => {
-        const promises = sources.map(({ id }) => {
-          const subCollections = [
-            getServiceOfferings(id).then((data) =>
-              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offerings', data } })
-            ),
-            getServicePlans(id).then((data) =>
-              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-plans', data } })
-            ),
-            getServiceInstance(id).then((data) =>
-              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instances', data } })
-            ),
-            getServiceInventories(id).then((data) =>
-              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-inventories', data } })
-            ),
-            getServiceInstanceNodes(id).then((data) =>
-              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instance-nodes', data } })
-            ),
-            getServiceOfferingNodes(id).then((data) =>
-              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offering-nodes', data } })
-            ),
-          ];
-          return Promise.all(subCollections).then(() => setLoading(false));
+    if (!structure?.data || structure?.data?.length === 0) {
+      setLoading(true);
+      getSources()
+        .then((data) => {
+          dispatch({ type: SET_DATA, payload: data });
+          return data.data;
+        })
+        .then((sources) => {
+          const promises = sources.map(({ id }) => {
+            const subCollections = [
+              getServiceOfferings(id).then((data) =>
+                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offerings', data } })
+              ),
+              getServicePlans(id).then((data) =>
+                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-plans', data } })
+              ),
+              getServiceInstance(id).then((data) =>
+                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instances', data } })
+              ),
+              getServiceInventories(id).then((data) =>
+                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-inventories', data } })
+              ),
+              getServiceInstanceNodes(id).then((data) =>
+                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instance-nodes', data } })
+              ),
+              getServiceOfferingNodes(id).then((data) =>
+                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offering-nodes', data } })
+              ),
+            ];
+            return Promise.all(subCollections).then(() => setLoading(false));
+          });
+          return Promise.all(promises);
         });
-        return Promise.all(promises);
-      });
+    }
   }, []);
   if (loading) {
-    return <div>Loading</div>;
+    return <CardLoader />;
   }
 
   const treeData = createTreeData(structure);
   return (
-    <div>
-      <Tree
-        data={treeData}
-        render={({ title, id, type }) =>
-          type ? (
-            <Link
-              to={{
-                pathname: '/entity',
-                search: `?id=${id}&type=${type}`,
-              }}
-            >
-              {title}
-            </Link>
-          ) : (
-            <div>{title}</div>
-          )
-        }
-      />
-    </div>
+    <Card>
+      <CardBody>
+        <Tree
+          data={treeData}
+          render={({ title, id, type }) =>
+            type ? (
+              <Link
+                to={{
+                  pathname: '/entity',
+                  search: `?id=${id}&type=${type}`,
+                }}
+              >
+                {title}
+              </Link>
+            ) : (
+              <div>{title}</div>
+            )
+          }
+        />
+      </CardBody>
+    </Card>
   );
 };
 
