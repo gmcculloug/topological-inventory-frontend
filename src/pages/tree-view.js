@@ -39,6 +39,7 @@ function createNodeData(node, type) {
     id: node.id,
     title: node.name || node.id,
     ...(type && { type }),
+    ...(node.entityType && { type: node.entityType }),
     nodeData: node,
   };
 }
@@ -61,7 +62,10 @@ const TreeView = () => {
       setLoading(true);
       getSources()
         .then((data) => {
-          dispatch({ type: SET_DATA, payload: data });
+          dispatch({
+            type: SET_DATA,
+            payload: { ...data, data: data.data.map((d) => ({ ...d, entityType: 'sources' })) },
+          });
           return data.data;
         })
         .then((sources) => {
