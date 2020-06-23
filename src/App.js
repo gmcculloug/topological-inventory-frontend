@@ -5,7 +5,7 @@ import Routes from './routes';
 const App = () => {
   useEffect(() => {
     insights.chrome.init();
-    insights.chrome.identifyApp('topological-inventory');
+    // insights.chrome.identifyApp('topological-inventory');
   }, []);
 
   return (

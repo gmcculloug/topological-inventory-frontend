@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import {
   Card,
@@ -9,6 +10,10 @@ import {
   TextListItemVariants,
   TextListVariants,
   TextList,
+  BreadcrumbItem,
+  Breadcrumb,
+  Spinner,
+  Bullseye,
 } from '@patternfly/react-core';
 
 import {
@@ -45,13 +50,42 @@ const EntityDetail = () => {
   }, []);
 
   if (!data) {
-    return '...loading';
+    return (
+      <Card>
+        <CardTitle>
+          <Breadcrumb>
+            <BreadcrumbItem>
+              <Link to="/">Topology Inventory</Link>
+            </BreadcrumbItem>
+            <BreadcrumbItem>...</BreadcrumbItem>
+            <BreadcrumbItem>{type}</BreadcrumbItem>
+            <BreadcrumbItem to="#" isActive>
+              {id}
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </CardTitle>
+        <CardBody>
+          <Bullseye>
+            <Spinner size="lg" />
+          </Bullseye>
+        </CardBody>
+      </Card>
+    );
   }
 
   return (
     <Card>
       <CardTitle>
-        {type} -- {id}
+        <Breadcrumb>
+          <BreadcrumbItem>
+            <Link to="/">Topology Inventory</Link>
+          </BreadcrumbItem>
+          {data.source_id && <BreadcrumbItem>{data.source_id}</BreadcrumbItem>}
+          <BreadcrumbItem>{type}</BreadcrumbItem>
+          <BreadcrumbItem to="#" isActive>
+            {id}
+          </BreadcrumbItem>
+        </Breadcrumb>
       </CardTitle>
       <CardBody>
         <TextContent>
