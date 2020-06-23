@@ -25,6 +25,7 @@ import {
   getServiceOffering,
 } from '../api/ansible-tower';
 import styled from 'styled-components';
+import { paths } from '../routes';
 
 const apiMapper = {
   sources: getSource,
@@ -59,7 +60,10 @@ const EntityDetail = () => {
         <CardTitle>
           <Breadcrumb>
             <BreadcrumbItem>
-              <Link to="/">Topology Inventory</Link>
+              <Link to={paths.index}>Topology Inventory</Link>
+            </BreadcrumbItem>
+            <BreadcrumbItem>
+              <Link to={paths.treeView}>Tree view</Link>
             </BreadcrumbItem>
             <BreadcrumbItem>...</BreadcrumbItem>
             <BreadcrumbItem>{type}</BreadcrumbItem>
@@ -82,7 +86,10 @@ const EntityDetail = () => {
       <CardTitle>
         <Breadcrumb>
           <BreadcrumbItem>
-            <Link to="/">Topology Inventory</Link>
+            <Link to={paths.index}>Topology Inventory</Link>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <Link to={paths.treeView}>Tree view</Link>
           </BreadcrumbItem>
           {data.source_id && <BreadcrumbItem>{data.source_id}</BreadcrumbItem>}
           <BreadcrumbItem>{type}</BreadcrumbItem>

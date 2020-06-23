@@ -12,8 +12,9 @@ import {
 } from '../api/ansible-tower';
 import { UPDATE_NODE, SET_DATA } from '../store/action-types/sources-action-types';
 import { Link } from 'react-router-dom';
-import { Card, CardBody } from '@patternfly/react-core';
+import { Card, CardBody, CardTitle, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import CardLoader from '../components/loaders/card-loader';
+import { paths } from '../routes';
 
 function createNodeData(node, type) {
   if (!node) {
@@ -99,6 +100,14 @@ const TreeView = () => {
   const treeData = createTreeData(structure);
   return (
     <Card>
+      <CardTitle>
+        <Breadcrumb>
+          <BreadcrumbItem>
+            <Link to={paths.index}>Topology Inventory</Link>
+          </BreadcrumbItem>
+          <BreadcrumbItem isActive>Tree view</BreadcrumbItem>
+        </Breadcrumb>
+      </CardTitle>
       <CardBody>
         <Tree
           data={treeData}
