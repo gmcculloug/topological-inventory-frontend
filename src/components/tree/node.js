@@ -6,7 +6,8 @@ const NodeWrapper = styled(({ level, ...props }) => <div {...props} />)`
   padding-left: ${({ level }) => (level > 0 ? 24 : 0)}px;
 `;
 
-const DefaultRenderComponent = ({ title, level }) => React.createElement(`h${level + 1 <= 6 ? level + 1 : 6}`, {}, title);
+const DefaultRenderComponent = ({ title, level }) =>
+  React.createElement(`h${level + 1 <= 6 ? level + 1 : 6}`, {}, title);
 
 DefaultRenderComponent.propTypes = {
   title: PropTypes.node.isRequired,

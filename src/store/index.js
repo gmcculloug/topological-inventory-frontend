@@ -1,4 +1,6 @@
-import ReducerRegistry, { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
+import ReducerRegistry, {
+  applyReducerHash,
+} from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
 import promiseMiddleware from 'redux-promise-middleware';
 import sourcesReducer, { sourcesInitialState } from './reducers/sources-reducer';
 

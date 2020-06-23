@@ -63,12 +63,24 @@ const TreeView = () => {
       .then((sources) => {
         const promises = sources.map(({ id }) => {
           const subCollections = [
-            getServiceOfferings(id).then((data) => dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offerings', data } })),
-            getServicePlans(id).then((data) => dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-plans', data } })),
-            getServiceInstance(id).then((data) => dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instances', data } })),
-            getServiceInventories(id).then((data) => dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-inventories', data } })),
-            getServiceInstanceNodes(id).then((data) => dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instance-nodes', data } })),
-            getServiceOfferingNodes(id).then((data) => dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offering-nodes', data } })),
+            getServiceOfferings(id).then((data) =>
+              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offerings', data } })
+            ),
+            getServicePlans(id).then((data) =>
+              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-plans', data } })
+            ),
+            getServiceInstance(id).then((data) =>
+              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instances', data } })
+            ),
+            getServiceInventories(id).then((data) =>
+              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-inventories', data } })
+            ),
+            getServiceInstanceNodes(id).then((data) =>
+              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instance-nodes', data } })
+            ),
+            getServiceOfferingNodes(id).then((data) =>
+              dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offering-nodes', data } })
+            ),
           ];
           return Promise.all(subCollections).then(() => setLoading(false));
         });
