@@ -1,3 +1,5 @@
+# This application is currently a POC for future use. Nothing is finished and everything is subject to change.
+
 [![Build Status](https://travis-ci.org/RedHatInsights/insights-frontend-starter-app.svg?branch=master)](https://travis-ci.org/RedHatInsights/insights-frontend-starter-app)
 
 # insights-frontend-starter-app
