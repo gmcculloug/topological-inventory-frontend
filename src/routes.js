@@ -1,6 +1,5 @@
 import React, { Suspense, lazy } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import EntityDetail from './pages/detail';
 import CardLoader from './components/loaders/card-loader';
 import { Grid, GridItem } from '@patternfly/react-core';
 import styled from 'styled-components';
@@ -12,7 +11,6 @@ const Crossroads = lazy(() => import('./pages/crossroads'));
 export const paths = {
   index: '/',
   treeView: '/tree-view',
-  detail: '/entity',
   topologyView: '/topology-viewer',
 };
 
@@ -25,7 +23,6 @@ const Routes = () => (
     <GridItem>
       <Suspense fallback={<CardLoader />}>
         <Switch>
-          <Route path={`${paths.detail}`} component={EntityDetail} />
           <Route exact path={paths.treeView} component={TreeView} />
           <Route exact path={paths.topologyView} component={TopologyView} />
           <Route path={Routes.index} component={Crossroads} />
