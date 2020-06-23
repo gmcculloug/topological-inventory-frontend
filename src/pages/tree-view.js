@@ -140,7 +140,7 @@ const TreeView = () => {
             <CardTitle>
               <Breadcrumb>
                 <BreadcrumbItem>
-                  <Link to={paths.index}>Topology Inventory</Link>
+                  <Link to={paths.index}>Topological inventory</Link>
                 </BreadcrumbItem>
                 <BreadcrumbItem isActive>Tree view</BreadcrumbItem>
               </Breadcrumb>
@@ -159,7 +159,7 @@ const TreeView = () => {
                       {title}
                     </a>
                   ) : (
-                    <div>{title}</div>
+                    <span>{title}</span>
                   )
                 }
               />

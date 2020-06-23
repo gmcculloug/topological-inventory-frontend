@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
+import { Button } from '@patternfly/react-core';
+
+import AngleRightIcon from '@patternfly/react-icons/dist/js/icons/angle-right-icon';
+import AngleDownIcon from '@patternfly/react-icons/dist/js/icons/angle-down-icon';
 
 const NodeWrapper = styled(({ level, ...props }) => <div {...props} />)`
   padding-left: ${({ level }) => (level > 0 ? 24 : 0)}px;
@@ -15,12 +20,24 @@ DefaultRenderComponent.propTypes = {
 };
 
 const Node = ({ title, level, children, render, ...node }) => {
+  const [open, setOpen] = useState(true);
+
   return (
     <NodeWrapper level={level}>
-      {render({ title, level, ...node })}
-      {children.map((node) => (
-        <Node level={level + 1} key={node.id} _ {...node} render={render} />
-      ))}
+      <div>
+        {children.length > 0 && !open && (
+          <Button variant="plain" onClick={() => setOpen(true)}>
+            <AngleRightIcon />
+          </Button>
+        )}
+        {children.length > 0 && open && (
+          <Button variant="plain" onClick={() => setOpen(false)}>
+            <AngleDownIcon />
+          </Button>
+        )}
+        {render({ title, level, ...node })}
+      </div>
+      {open && children.map((node) => <Node level={level + 1} key={node.id} _ {...node} render={render} />)}
     </NodeWrapper>
   );
 };

@@ -345,7 +345,7 @@ const TopologyView = () => {
     <React.Fragment>
       <Breadcrumb style={{ position: 'absolute' }} className="pf-u-m-lg">
         <BreadcrumbItem>
-          <Link to={paths.index}>Topology Inventory</Link>
+          <Link to={paths.index}>Topological inventory</Link>
         </BreadcrumbItem>
         <BreadcrumbItem isActive>Topology view</BreadcrumbItem>
       </Breadcrumb>
