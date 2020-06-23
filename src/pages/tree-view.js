@@ -12,9 +12,23 @@ import {
 } from '../api/ansible-tower';
 import { UPDATE_NODE, SET_DATA } from '../store/action-types/sources-action-types';
 import { Link } from 'react-router-dom';
-import { Card, CardBody, CardTitle, Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
+import {
+  Card,
+  CardBody,
+  CardTitle,
+  Breadcrumb,
+  BreadcrumbItem,
+  Drawer,
+  DrawerContent,
+  DrawerContentBody,
+  DrawerPanelContent,
+  DrawerHead,
+  DrawerActions,
+  DrawerCloseButton,
+} from '@patternfly/react-core';
 import CardLoader from '../components/loaders/card-loader';
 import { paths } from '../routes';
+import ReactJsonView from 'react-json-view';
 
 function createNodeData(node, type) {
   if (!node) {
@@ -55,6 +69,8 @@ function createTreeData(sources) {
 
 const TreeView = () => {
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState({});
+  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const structure = useSelector(({ sourcesReducer }) => sourcesReducer);
 
@@ -101,37 +117,57 @@ const TreeView = () => {
     return <CardLoader />;
   }
 
+  const { type, entityType, subCollections, ...node } = data;
+
+  const panelContent = (
+    <DrawerPanelContent>
+      <DrawerHead>
+        {`${type || entityType} ${data.name || data.id}`}
+        <ReactJsonView src={node} />
+        <DrawerActions>
+          <DrawerCloseButton onClick={() => setOpen(false)} />
+        </DrawerActions>
+      </DrawerHead>
+    </DrawerPanelContent>
+  );
+
   const treeData = createTreeData(structure);
   return (
-    <Card>
-      <CardTitle>
-        <Breadcrumb>
-          <BreadcrumbItem>
-            <Link to={paths.index}>Topology Inventory</Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem isActive>Tree view</BreadcrumbItem>
-        </Breadcrumb>
-      </CardTitle>
-      <CardBody>
-        <Tree
-          data={treeData}
-          render={({ title, id, type }) =>
-            type ? (
-              <Link
-                to={{
-                  pathname: '/entity',
-                  search: `?id=${id}&type=${type}`,
-                }}
-              >
-                {title}
-              </Link>
-            ) : (
-              <div>{title}</div>
-            )
-          }
-        />
-      </CardBody>
-    </Card>
+    <Drawer isExpanded={open}>
+      <DrawerContent panelContent={panelContent}>
+        <DrawerContentBody>
+          <Card>
+            <CardTitle>
+              <Breadcrumb>
+                <BreadcrumbItem>
+                  <Link to={paths.index}>Topology Inventory</Link>
+                </BreadcrumbItem>
+                <BreadcrumbItem isActive>Tree view</BreadcrumbItem>
+              </Breadcrumb>
+            </CardTitle>
+            <CardBody>
+              <Tree
+                data={treeData}
+                render={({ title, type, nodeData }) =>
+                  type ? (
+                    <a
+                      onClick={() => {
+                        setData({ type, entityType, ...nodeData });
+                        setOpen(true);
+                      }}
+                    >
+                      {title}
+                    </a>
+                  ) : (
+                    <div>{title}</div>
+                  )
+                }
+              />
+            </CardBody>
+          </Card>
+        </DrawerContentBody>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
