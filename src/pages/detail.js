@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import ReactJsonView from 'react-json-view';
 
 import {
   Card,
   CardTitle,
   CardBody,
   TextContent,
-  TextListItem,
-  TextListItemVariants,
   TextListVariants,
   TextList,
   BreadcrumbItem,
@@ -25,6 +24,7 @@ import {
   getServicePlan,
   getServiceOffering,
 } from '../api/ansible-tower';
+import styled from 'styled-components';
 
 const apiMapper = {
   sources: getSource,
@@ -35,6 +35,10 @@ const apiMapper = {
   'service-plans': getServicePlan,
   'service-offerings': getServiceOffering,
 };
+
+const StyledCard = styled(Card)`
+  min-height: 100%;
+`;
 
 const EntityDetail = () => {
   const [data, setData] = useState(null);
@@ -74,7 +78,7 @@ const EntityDetail = () => {
   }
 
   return (
-    <Card>
+    <StyledCard>
       <CardTitle>
         <Breadcrumb>
           <BreadcrumbItem>
@@ -90,18 +94,11 @@ const EntityDetail = () => {
       <CardBody>
         <TextContent>
           <TextList component={TextListVariants.dl}>
-            {Object.keys(data).map((key) => (
-              <React.Fragment key={key}>
-                <TextListItem component={TextListItemVariants.dt}>{key}</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>
-                  {typeof data[key] === 'string' ? data[key] : <pre>{JSON.stringify(data[key], null, 2)}</pre>}
-                </TextListItem>
-              </React.Fragment>
-            ))}
+            <ReactJsonView src={data} />
           </TextList>
         </TextContent>
       </CardBody>
-    </Card>
+    </StyledCard>
   );
 };
 

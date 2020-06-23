@@ -1,16 +1,19 @@
 import React from 'react';
 import { Bullseye, Card, CardBody, Spinner } from '@patternfly/react-core';
+import styled from 'styled-components';
+
+const StyledCard = styled(Card)`
+  height: 100%;
+`;
 
 const CardLoader = () => (
-  <Card>
+  <StyledCard>
     <CardBody>
-      <CardBody>
-        <Bullseye>
-          <Spinner size="lg" />
-        </Bullseye>
-      </CardBody>
+      <Bullseye>
+        <Spinner size="xl" />
+      </Bullseye>
     </CardBody>
-  </Card>
+  </StyledCard>
 );
 
 export default CardLoader;
