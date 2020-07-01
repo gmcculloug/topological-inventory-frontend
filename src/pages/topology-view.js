@@ -44,6 +44,7 @@ import { paths } from '../routes';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import DetailDrawer from '../components/detail-drawer';
+import { getSourceTypes, getSourcesTypes } from '../api/sources';
 
 const reducer = (state, { type, payload }) => {
   const states = {
@@ -213,8 +214,16 @@ const TopologyView = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    getSources().then((sources) => {
+    Promise.all([getSources(), getSourceTypes()]).then(async ([sources, sourceTypes]) => {
+      const {
+        data: { sources: sourcesTypes },
+      } = await getSourcesTypes(sources.data.map(({ id }) => id));
+
       const promises = sources.data.map((source, group) => {
+        const type = sourceTypes.data.find(
+          (type) => type.id === sourcesTypes.find(({ id }) => id === source.id).source_type_id
+        );
+
         const subCollections = [
           getServiceOfferings(source.id),
           getServicePlans(source.id),
@@ -233,7 +242,7 @@ const TopologyView = () => {
             serviceOfferingsNode,
           ]) =>
             buildNodes({
-              source,
+              source: { ...source, type },
               serviceOfferings,
               servicePlans,
               serviceInstances,
