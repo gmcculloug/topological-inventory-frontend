@@ -16,6 +16,75 @@ import { Card, CardBody, CardTitle, Breadcrumb, BreadcrumbItem } from '@patternf
 import CardLoader from '../components/loaders/card-loader';
 import { paths } from '../routes';
 import DetailDrawer from '../components/detail-drawer';
+import { getSourcesTypes, getSourceTypes } from '../api/sources';
+import {
+  getVms,
+  getSecurityGroups,
+  getTags,
+  getNetworkAdapters,
+  getPrivateIpAddresses,
+  getPublicIpAddresses,
+} from '../api/amazon';
+
+const promisesMapper = (id, typeName, dispatch) => {
+  switch (typeName) {
+    case 'ansible-tower':
+      return [
+        getServiceOfferings(id).then((data) =>
+          dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offerings', data } })
+        ),
+        getServicePlans(id).then((data) =>
+          dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-plans', data } })
+        ),
+        getServiceInstance(id).then((data) =>
+          dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instances', data } })
+        ),
+        getServiceInventories(id).then((data) =>
+          dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-inventories', data } })
+        ),
+        getServiceInstanceNodes(id).then((data) =>
+          dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instance-nodes', data } })
+        ),
+        getServiceOfferingNodes(id).then((data) =>
+          dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offering-nodes', data } })
+        ),
+      ];
+    case 'amazon':
+      return [
+        getVms(id)
+          .then((data) => {
+            dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'vms', data } });
+
+            return data.data;
+          })
+          .then((data) => {
+            const promises = data.map(({ id }) => {
+              const subCollections = [
+                getSecurityGroups(id).then((data) =>
+                  dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'security-groups', data } })
+                ),
+                getTags(id).then((data) => dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'tags', data } })),
+                getNetworkAdapters(id).then((data) =>
+                  dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'network-adapters', data } })
+                ),
+                getPrivateIpAddresses(id).then((data) =>
+                  dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'private-ip-addresses', data } })
+                ),
+                getPublicIpAddresses(id).then((data) =>
+                  dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'public-ip-addresses', data } })
+                ),
+              ];
+
+              return Promise.all(subCollections);
+            });
+
+            return Promise.all(promises);
+          }),
+      ];
+    default:
+      return [];
+  }
+};
 
 function createNodeData(node, type) {
   if (!node) {
@@ -64,36 +133,33 @@ const TreeView = () => {
   useEffect(() => {
     if (!structure?.data || structure?.data?.length === 0) {
       setLoading(true);
-      getSources()
-        .then((data) => {
+      Promise.all([getSources(), getSourceTypes()])
+        .then(async ([data, sourceTypes]) => {
+          const sourcesTypes = await getSourcesTypes(data.data.map(({ id }) => id));
+
+          const modifiedData = data.data.map((d) => ({
+            ...d,
+            entityType: 'sources',
+            source_type_id: sourcesTypes.data.sources.find(({ id }) => id === d.id).source_type_id,
+            source_type_name: sourceTypes.data.find(
+              ({ id }) => id === sourcesTypes.data.sources.find(({ id }) => id === d.id).source_type_id
+            ).name,
+          }));
+
           dispatch({
             type: SET_DATA,
-            payload: { ...data, data: data.data.map((d) => ({ ...d, entityType: 'sources' })) },
+            payload: {
+              ...data,
+              data: modifiedData,
+            },
           });
-          return data.data;
+
+          return modifiedData;
         })
         .then((sources) => {
-          const promises = sources.map(({ id }) => {
-            const subCollections = [
-              getServiceOfferings(id).then((data) =>
-                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offerings', data } })
-              ),
-              getServicePlans(id).then((data) =>
-                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-plans', data } })
-              ),
-              getServiceInstance(id).then((data) =>
-                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instances', data } })
-              ),
-              getServiceInventories(id).then((data) =>
-                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-inventories', data } })
-              ),
-              getServiceInstanceNodes(id).then((data) =>
-                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-instance-nodes', data } })
-              ),
-              getServiceOfferingNodes(id).then((data) =>
-                dispatch({ type: UPDATE_NODE, id, subCollections: { type: 'service-offering-nodes', data } })
-              ),
-            ];
+          const promises = sources.map(({ id, source_type_name }) => {
+            const subCollections = promisesMapper(id, source_type_name, dispatch);
+
             return Promise.all(subCollections).then(() => setLoading(false));
           });
           return Promise.all(promises);
@@ -104,11 +170,11 @@ const TreeView = () => {
     return <CardLoader />;
   }
 
-  const { entityType } = data;
+  const { entityType, subCollections, ...restOfData } = data;
 
   const treeData = createTreeData(structure);
   return (
-    <DetailDrawer open={open} data={data} setOpen={setOpen}>
+    <DetailDrawer open={open} data={restOfData} setOpen={setOpen}>
       <Card>
         <CardTitle>
           <Breadcrumb>
